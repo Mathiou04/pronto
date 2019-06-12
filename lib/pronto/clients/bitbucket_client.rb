@@ -1,6 +1,6 @@
 class BitbucketClient
   include HTTParty
-  base_uri 'https://api.bitbucket.org/1.0/repositories'
+  base_uri 'https://api.bitbucket.org/2.0/repositories'
 
   def initialize(username, password)
     self.class.basic_auth(username, password)
@@ -8,7 +8,7 @@ class BitbucketClient
 
   def commit_comments(slug, sha)
     response = get("/#{slug}/changesets/#{sha}/comments")
-    openstruct(response)
+    openstruct(response['values'])
   end
 
   def create_commit_comment(slug, sha, body, path, position)
@@ -17,12 +17,11 @@ class BitbucketClient
 
   def pull_comments(slug, pull_id)
     response = get("/#{slug}/pullrequests/#{pull_id}/comments")
-    openstruct(response)
+    openstruct(response['values'])
   end
 
   def pull_requests(slug)
-    base = 'https://api.bitbucket.org/2.0/repositories'
-    response = get("#{base}/#{slug}/pullrequests?state=OPEN")
+    response = get("#{slug}/pullrequests?state=OPEN")
     openstruct(response['values'])
   end
 
